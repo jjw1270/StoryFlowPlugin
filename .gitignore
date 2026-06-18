@@ -1,0 +1,7 @@
+### UnrealEngine Plugins ###
+
+Binaries/*
+Intermediate/*
+
+# Built data for maps
+*_BuiltData.uasset

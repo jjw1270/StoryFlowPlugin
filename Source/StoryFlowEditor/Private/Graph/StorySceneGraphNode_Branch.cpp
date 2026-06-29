@@ -282,6 +282,25 @@ void UStorySceneGraphNode_Branch::SyncNextPinsToNodeData()
 {
 	const TArray<FStoryBranchOutput> branch_outputs = GetBranchOutputs(_BranchNodeData);
 	const int32 desired_branch_count = branch_outputs.Num();
+	bool is_next_link_dirty = false;
+	if (IsValid(_BranchNodeData))
+	{
+		TMap<int32, FStorySceneBranchLink> next_links_by_pin_index = _BranchNodeData->GetNextLinksByPinIndex();
+		for (auto link_it = next_links_by_pin_index.CreateIterator(); link_it; ++link_it)
+		{
+			if (link_it.Key() < 0 || link_it.Key() >= desired_branch_count)
+			{
+				link_it.RemoveCurrent();
+				is_next_link_dirty = true;
+			}
+		}
+
+		if (is_next_link_dirty)
+		{
+			_BranchNodeData->SetNextLinksByPinIndex(next_links_by_pin_index);
+		}
+	}
+
 	TArray<UEdGraphPin*> next_pins = GetNextPins();
 	const int32 current_branch_count = next_pins.Num();
 	bool is_pin_display_name_dirty = false;
@@ -302,7 +321,7 @@ void UStorySceneGraphNode_Branch::SyncNextPinsToNodeData()
 
 	if (desired_branch_count == current_branch_count)
 	{
-		if (is_pin_display_name_dirty)
+		if (is_pin_display_name_dirty || is_next_link_dirty)
 		{
 			if (UEdGraph* graph = GetGraph())
 			{

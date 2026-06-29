@@ -309,6 +309,7 @@ Details에서 DisplayName 또는 Description을 수정하면 노드 제목/comme
 - Branch 출력 핀은 `Next_0`, `Next_1` 순서로 정렬/사용한다.
 - BranchTemplate이 없거나 Outputs가 비어 있으면 Branch 출력 핀을 표시하지 않는다.
 - Branch 출력 핀의 내부 이름은 `Next_i`를 유지하고, 그래프 표시명은 Outputs의 DisplayName을 사용한다.
+- 출력 수가 줄어든 경우 더 이상 존재하지 않는 출력 인덱스의 Compile 링크는 핀 동기화 중 정리한다.
 
 ---
 

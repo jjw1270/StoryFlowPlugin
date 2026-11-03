@@ -30,6 +30,7 @@
 #include "Editor.h"
 #include "Editor/EditorEngine.h"
 #include "Engine/GameInstance.h"
+#include "Misc/EngineVersionComparison.h"
 #include "CommonUtils.h"
 
 IMPLEMENT_MODULE(FStoryFlowEditorModule, StoryFlowEditor)
@@ -77,8 +78,35 @@ namespace
 
 	class FStoryFlowPIEAuthorizer : public IPIEAuthorizer
 	{
+#if UE_VERSION_NEWER_THAN_OR_EQUAL(5, 8, 0)
+	protected:
+		// 툴바 갱신 같은 조용한 조회에서도 호출되므로, 컴파일/알림 같은 부작용 없이 허용만 반환.
+		virtual TValueOrError<bool, FText> IsPIEAuthorizedInternal(bool _is_simulate_in_editor) const override
+		{
+			return MakeValue(true);
+		}
+
+		// 실제 PIE 시작 요청 시에만 호출됨.
+		virtual TValueOrError<bool, FText> RequestPIEPermissionInternal(bool _is_simulate_in_editor) const override
+		{
+			FString denied_reason;
+			if (ValidateActiveEditorsForPIE(denied_reason))
+			{
+				return MakeValue(true);
+			}
+
+			return MakeError(FText::FromString(denied_reason));
+		}
+#else
 	public:
 		virtual bool RequestPIEPermission(bool _is_simulate_in_editor, FString& _out_reason) const override
+		{
+			return ValidateActiveEditorsForPIE(_out_reason);
+		}
+#endif
+
+	private:
+		static bool ValidateActiveEditorsForPIE(FString& _out_reason)
 		{
 			TArray<FStorySceneEditor*> active_editors;
 			FStorySceneEditor::GetActiveEditors(active_editors);

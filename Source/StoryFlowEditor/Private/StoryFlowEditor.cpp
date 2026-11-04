@@ -95,7 +95,9 @@ namespace
 				return MakeValue(true);
 			}
 
-			return MakeError(FText::FromString(denied_reason));
+			// 거부 시 StorySceneEditor가 이미 오류 알림과 메시지 로그를 띄움.
+			// 에러를 돌려주면 엔진이 같은 내용의 알림을 하나 더 띄우므로, 사유 없이 거부만 반환.
+			return MakeValue(false);
 		}
 #else
 	public:

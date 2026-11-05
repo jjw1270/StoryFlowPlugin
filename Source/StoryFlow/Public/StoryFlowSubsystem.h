@@ -19,6 +19,8 @@ class UWorld;
 class APlayerController;
 struct FStorySceneBranchLink;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnStoryCheckpointReached, const FStoryFlowRef&, _checkpoint_ref);
+
 UENUM()
 enum class EStoryFlowPendingTravelPhase : uint8
 {
@@ -64,6 +66,11 @@ protected:
 	bool _PendingTargetLevelLoadCompleted = false;
 	double _PendingLoadingLevelEnterTime = 0.0;
 	bool _IsDebugOverlayEnabled = false;
+
+public:
+	/** 체크포인트로 표시된 Shot(UStorySceneNodeData::_IsCheckpoint)에 들어가기 직전에 그 위치를 알린다. 게임은 이 값을 저장했다가 StartFromRef로 이어간다. */
+	UPROPERTY(BlueprintAssignable, Category = "StoryFlow|Event")
+	FDM_OnStoryCheckpointReached _OnCheckpointReached;
 
 public:
 	virtual void Initialize(FSubsystemCollectionBase& _collection) override;

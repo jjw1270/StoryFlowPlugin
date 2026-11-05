@@ -70,6 +70,10 @@ protected:
 	UPROPERTY(EditAnywhere, Instanced, BlueprintReadOnly, Category = "StoryFlow")
 	TObjectPtr<UStoryShotBase> _ShotTemplate = nullptr;
 
+	/** 켜면 이 Shot에 들어갈 때 UStoryFlowSubsystem::_OnCheckpointReached로 현재 위치(SceneID + ShotID)를 알린다. 게임은 이 알림을 받아 이어하기 위치를 저장한다. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StoryFlow")
+	bool _IsCheckpoint = false;
+
 	UPROPERTY()
 	FStorySceneBranchLink _NextLink;
 
@@ -96,6 +100,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	UStoryShotBase* GetShotTemplate() const { return _ShotTemplate; }
+
+	UFUNCTION(BlueprintPure)
+	bool IsCheckpoint() const { return _IsCheckpoint; }
 
 	UFUNCTION(BlueprintPure)
 	const FStorySceneBranchLink& GetNextLink() const { return _NextLink; }

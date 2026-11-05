@@ -85,6 +85,7 @@ Shot 노드에 대응하는 데이터 오브젝트다.
 - `_DisplayName` — Shot 노드 제목의 두 번째 줄로 표시. 비어 있으면 `ShotTemplate` 설정 시 템플릿 이름으로 자동 채움
 - `_Description` — 그래프 comment bubble로 표시
 - `_ShotTemplate` — 실행할 `UStoryShotBase` 인스턴스 템플릿
+- `_IsCheckpoint` — 켜면 이 Shot에 들어갈 때 `UStoryFlowSubsystem::_OnCheckpointReached`로 현재 `FStoryFlowRef`를 알림. 노드 제목이 `Shot (Checkpoint)`로 표시됨
 - `_NextLink` — Compile 결과로 채워지는 내부 링크, Details에는 숨김
 
 ### `UStoryBranchNodeData`
@@ -210,9 +211,10 @@ Story Scene Editor의 Shot 노드 Play는 PIE 시작 전에 `UStoryFlowSubsystem
 2. ShotNode에서 `ShotTemplate` 확인
 3. `UStoryShotBase` 인스턴스 생성
 4. `InitializeShot`
-5. `EnterShot`
-6. 매 Tick에서 `TickShot`
-7. `FinishShot` 호출 즉시 `ExitShot` 및 다음 링크 처리
+5. ShotNode가 체크포인트면 `_OnCheckpointReached` 브로드캐스트
+6. `EnterShot`
+7. 매 Tick에서 `TickShot`
+8. `FinishShot` 호출 즉시 `ExitShot` 및 다음 링크 처리
 
 ### Branch 진행
 
@@ -412,7 +414,10 @@ Debug StoryFlow
 
 권장 저장 시점:
 
-- Shot이 진행 중일 때 `GetCurrentRef()`로 저장
+- Shot 노드의 `_IsCheckpoint`를 켜고, 게임에서 `_OnCheckpointReached`를 받아 그 Ref를 저장
+- 또는 Shot이 진행 중일 때 `GetCurrentRef()`로 저장
+
+체크포인트 알림은 `EnterShot` 직전에 나가므로, Shot이 들어가자마자 `FinishShot`해도 알림의 Ref는 그 체크포인트 Shot을 가리킨다. `StartFromRef`로 그 Shot부터 다시 시작하면 같은 체크포인트 알림이 한 번 더 나간다.
 
 복원:
 

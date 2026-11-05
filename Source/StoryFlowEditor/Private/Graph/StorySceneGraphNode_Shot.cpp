@@ -152,16 +152,19 @@ void UStorySceneGraphNode_Shot::AutowireNewNode(UEdGraphPin* _from_pin)
 
 FText UStorySceneGraphNode_Shot::GetNodeTitle(ENodeTitleType::Type) const
 {
+	const bool is_checkpoint = IsValid(_ShotNodeData) && _ShotNodeData->IsCheckpoint();
+	const FText title = FText::FromString(is_checkpoint ? TEXT("Shot (Checkpoint)") : TEXT("Shot"));
+
 	if (IsValid(_ShotNodeData))
 	{
 		const FText& display_name = _ShotNodeData->GetDisplayName();
 		if (display_name.IsEmpty() == false)
 		{
-			return FText::Format(FText::FromString(TEXT("Shot\n{0}")), display_name);
+			return FText::Format(FText::FromString(TEXT("{0}\n{1}")), title, display_name);
 		}
 	}
 
-	return FText::FromString(TEXT("Shot"));
+	return title;
 }
 
 FLinearColor UStorySceneGraphNode_Shot::GetNodeTitleColor() const

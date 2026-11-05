@@ -178,8 +178,9 @@ Shot 노드 Details에서 주로 편집하는 항목:
 | DisplayName | 노드 제목 아래에 표시되는 이름. 비어 있으면 ShotTemplate 설정 시 템플릿 이름으로 자동 입력 |
 | Description | 노드 comment bubble로 표시되는 설명 |
 | ShotTemplate | 실행할 Shot Blueprint 인스턴스 |
+| IsCheckpoint | 켜면 이 Shot에 들어갈 때 `_OnCheckpointReached` 알림. 게임이 이 위치를 이어하기 지점으로 저장할 때 사용 |
 
-노드 제목은 항상 `Shot`이며, DisplayName이 있으면 아래 줄에 표시된다.
+노드 제목은 `Shot`(체크포인트면 `Shot (Checkpoint)`)이며, DisplayName이 있으면 아래 줄에 표시된다.
 DisplayName을 수정하면 Shot 노드 제목에 바로 반영된다.
 Description을 수정하면 Shot 노드 comment bubble에 바로 반영된다.
 
@@ -358,6 +359,19 @@ FStoryFlowRef SaveRef = StoryFlow->GetCurrentRef();
 ```cpp
 StoryFlow->StartFromRef(SaveRef);
 ```
+
+체크포인트 Shot을 쓰면 저장 시점을 그래프에서 정할 수 있다. Shot 노드 Details에서 `IsCheckpoint`를 켜고, 게임 코드에서 알림을 받아 저장한다.
+
+```cpp
+StoryFlow->_OnCheckpointReached.AddDynamic(this, &UMyProgress::OnCheckpointReached);
+
+void UMyProgress::OnCheckpointReached(const FStoryFlowRef& CheckpointRef)
+{
+    // CheckpointRef를 SaveGame에 기록하고 디스크에 저장
+}
+```
+
+알림은 Shot의 `EnterShot` 직전에 나간다. 그 Shot부터 `StartFromRef`로 이어가면 체크포인트 알림이 다시 한 번 나간다.
 
 권장:
 

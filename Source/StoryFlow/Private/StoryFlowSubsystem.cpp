@@ -716,6 +716,20 @@ bool UStoryFlowSubsystem::MoveToShot(const FStoryShotID& _shot_id)
 	}
 
 	_CurrentShotInstance->InitializeShot(_shot_id);
+
+	// EnterShot 안에서 바로 FinishShot하면 현재 Shot이 바뀌므로, 체크포인트는 들어가기 전에 알린다.
+	if (shot_node->IsCheckpoint())
+	{
+		UStoryShotBase* entering_shot = _CurrentShotInstance;
+		_OnCheckpointReached.Broadcast(GetCurrentRef());
+
+		// 알림을 받은 쪽이 흐름을 멈추거나 다른 곳으로 옮겼으면 이 Shot은 시작하지 않는다.
+		if (_CurrentShotInstance != entering_shot)
+		{
+			return true;
+		}
+	}
+
 	_CurrentShotInstance->EnterShot();
 	return true;
 }

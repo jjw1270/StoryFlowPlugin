@@ -50,6 +50,28 @@ void UStorySceneNodeData::SetNextLink(const FStorySceneBranchLink& _next_link)
 	_NextLink = _next_link;
 	MarkPackageDirty();
 }
+
+void UStorySceneNodeData::SetShotTemplate(UStoryShotBase* _shot_template)
+{
+	if (_ShotTemplate == _shot_template)
+	{
+		return;
+	}
+
+	Modify();
+	_ShotTemplate = _shot_template;
+	MarkPackageDirty();
+}
+
+void UStorySceneNodeData::SetEditorInfo(const FText& _display_name, const FText& _description, bool _is_checkpoint)
+{
+	Modify();
+	_DisplayName = _display_name;
+	_Description = _description;
+	_IsCheckpoint = _is_checkpoint;
+	MarkPackageDirty();
+}
+
 #endif
 
 FText UStorySceneNodeData::GetDisplayNameText() const

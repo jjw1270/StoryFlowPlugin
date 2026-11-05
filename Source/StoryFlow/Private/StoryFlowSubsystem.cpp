@@ -456,7 +456,12 @@ bool UStoryFlowSubsystem::StartResolvedScene(UStorySceneAsset* _scene_asset, con
 		return false;
 	}
 
-	if (start_ref.ShotID.IsValid())
+	// 저장된 ShotID가 지워졌거나 이름이 바뀌었으면 Scene 처음부터 시작한다.
+	if (start_ref.ShotID.IsValid() && IsInvalid(_CurrentSceneAsset->FindShotNode(start_ref.ShotID)))
+	{
+		TRACE_WARNING(TEXT("Shot '%s' not found in scene '%s'. Starting from the scene entry."), *start_ref.ShotID.Get().ToString(), *start_ref.SceneID.Get().ToString());
+	}
+	else if (start_ref.ShotID.IsValid())
 	{
 		if (MoveToShot(start_ref.ShotID) == false)
 		{

@@ -83,6 +83,8 @@ public:
 
 	void SetShotID(const FStoryShotID& _shot_id);
 	void SetNextLink(const FStorySceneBranchLink& _next_link);
+	void SetShotTemplate(UStoryShotBase* _shot_template);
+	void SetEditorInfo(const FText& _display_name, const FText& _description, bool _is_checkpoint);
 #endif
 
 public:

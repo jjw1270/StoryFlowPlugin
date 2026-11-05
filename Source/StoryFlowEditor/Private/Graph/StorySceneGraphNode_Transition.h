@@ -28,5 +28,6 @@ public:
 	void SetCompileError(const FString& _error_message);
 
 	const FStorySceneID& GetNextSceneID() const { return _NextSceneID; }
+	void SetNextSceneID(const FStorySceneID& _next_scene_id) { _NextSceneID = _next_scene_id; }
 	const FText& GetDescriptionText() const { return _Description; }
 };
